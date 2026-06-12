@@ -1,0 +1,50 @@
+﻿@model SmartEventWeb.Models.ViewModels.InquiryTrackVM
+@{
+    ViewData["Title"] = "Track Inquiry";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="mb-1">Track Inquiry</h3>
+                    <p class="text-muted mb-4">Search using Email, Mobile, or Reference Code.</p>
+
+                    <form asp-action="Track" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReferenceCode" class="form-label fw-semibold">Reference Code</label>
+                            <input asp-for="ReferenceCode" class="form-control" placeholder="INQ-XXXXXX" />
+                            <span asp-validation-for="ReferenceCode" class="text-danger"></span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-semibold"></label>
+                                <input asp-for="Email" class="form-control" placeholder="example@email.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Mobile" class="form-label fw-semibold"></label>
+                                <input asp-for="Mobile" class="form-control" placeholder="07X XXX XXXX" />
+                                <span asp-validation-for="Mobile" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100 rounded-4 mt-3">Search</button>
+                    </form>
+
+                    <hr class="my-4" />
+                    <a class="btn btn-outline-secondary w-100 rounded-4" asp-action="Create">Submit New Inquiry</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

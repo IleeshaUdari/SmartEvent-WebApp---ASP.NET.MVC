@@ -1,0 +1,130 @@
+﻿@model SmartEventWeb.Models.EventSearchVM
+@{
+    ViewData["Title"] = "Event Search";
+}
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="fw-bold mb-0">Event Search</h2>
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Back Home</a>
+    </div>
+
+    <div class="card shadow-sm rounded-4 mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Category</label>
+                    <select class="form-select" name="CategoryId">
+                        <option value="">All</option>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <option value="@c.CategoryId" selected="@(Model.CategoryId == c.CategoryId)">
+                                @c.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Venue</label>
+                    <select class="form-select" name="VenueId">
+                        <option value="">All</option>
+                        @foreach (var v in Model.Venues)
+                        {
+                            <option value="@v.VenueId" selected="@(Model.VenueId == v.VenueId)">
+                                @v.Name (@v.Location)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">From</label>
+                    <input type="date" class="form-control" name="FromDate"
+                           value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">To</label>
+                    <input type="date" class="form-control" name="ToDate"
+                           value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Max Price (LKR)</label>
+                    <input type="number" class="form-control" step="0.01" name="MaxPrice"
+                           value="@(Model.MaxPrice?.ToString())" />
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary">Search</button>
+                    <a class="btn btn-outline-secondary" asp-controller="Events" asp-action="Search">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">Results (@Model.Results.Count)</h5>
+
+            @if (!Model.Results.Any())
+            {
+                <div class="alert alert-info mb-0">No matching events found.</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Venue</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">Remaining</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var e in Model.Results)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@e.Title</td>
+                                    <td>@e.EventDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@e.Category?.Name</td>
+                                    <td>@e.Venue?.Name (@e.Venue?.Location)</td>
+                                    <td class="text-end">@e.Price.ToString("0.00")</td>
+                                    <td class="text-end">@e.RemainingTickets</td>
+                               
+                                    <!-- ✅ ACTION COLUMN -->
+                                    <td class="text-end">
+
+                                        <!-- ✅ Guest reviews link -->
+                                        <a class="btn btn-sm btn-outline-secondary"
+                                           asp-controller="Reviews"
+                                           asp-action="Index"
+                                           asp-route-eventId="@e.EventId">
+                                            View Reviews
+                                        </a>
+
+                                        <!-- ✅ Booking link -->
+                                        <a class="btn btn-sm btn-outline-primary ms-1"
+                                           asp-controller="Bookings"
+                                           asp-action="Create"
+                                           asp-route-eventId="@e.EventId">
+                                            Book
+                                        </a>
+                                         
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

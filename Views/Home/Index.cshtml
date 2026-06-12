@@ -1,0 +1,140 @@
+﻿@model List<SmartEventWeb.Models.Event>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="p-4 p-md-5 mb-4 rounded-4 bg-light border">
+                <div class="row align-items-center g-4">
+                    <!-- LEFT: Title + text -->
+                    <div class="col-md-8">
+                        <h1 class="display-6 fw-bold mb-2">Smart Event Management System</h1>
+                        <p class="text-muted mb-0">
+                            Council overview, featured events, ticket booking, and member reviews in one platform.
+                        </p>
+                    </div>
+
+                    <!-- RIGHT: Buttons -->
+                    <div class="col-md-4 text-md-end">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a class="btn btn-primary btn-lg rounded-4"
+                               asp-area="Identity" asp-page="/Account/Register">
+                                Become a Member
+                            </a>
+
+                            <a class="btn btn-outline-primary btn-lg rounded-4"
+                               asp-area="Identity" asp-page="/Account/Login">
+                                Sign In
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+    <div class="row g-3 mb-4">
+    <!-- Featured Events -->
+    <div class="col-md-4">
+        <div class="card shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="fw-semibold"><b>Featured Events</b></div>
+                <div class="text-muted small">Upcoming events loaded for public display.</div>
+                <div class="display-6">@Model.Count()</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Find Events (Member search) -->
+    <div class="col-md-4">
+        <div class="card shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="fw-semibold"><b>Find Events</b></div>
+                <div class="text-muted small mb-2">Search events by category, date, location, and price.</div>
+                <a class="btn btn-outline-dark btn-sm"
+                   asp-controller="Events"
+                   asp-action="Search">
+                    Open Event Search
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guest Access (Restricted search) -->
+    <div class="col-md-4">
+        <div class="card shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="fw-semibold"><b>Guest Access</b></div>
+                <div class="text-muted small mb-2">Browse events without logging in.</div>
+                <a class="btn btn-outline-dark btn-sm"
+                   asp-controller="Events"
+                   asp-action="GuestSearch">
+                    Open Guest Search
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body">
+            <h5 class="mb-3 fw-bold">Featured Upcoming Events</h5>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Venue</th>
+                            <th class="text-end">Price (LKR)</th>
+                            <th class="text-end">Remaining</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@e.Title</td>
+                                <td>@e.EventDate.ToString("yyyy-MM-dd")</td>
+                                <td><span class="badge bg-secondary">@e.Category?.Name</span></td>
+                                <td>@e.Venue?.Name (@e.Venue?.Location)</td>
+                                <td class="text-end">@e.Price.ToString("0.00")</td>
+                                <td class="text-end">
+                                    <span class="badge @(e.RemainingTickets <= 10 ? "bg-danger" : "bg-success")">
+                                        @e.RemainingTickets
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                                {
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       asp-controller="Bookings"
+                                       asp-action="Create"
+                                       asp-route-eventId="@e.EventId">
+                                        Book
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       asp-area="Identity"
+                                       asp-page="/Account/Login">
+                                        Book
+                                    </a>
+                                }
+
+                                    <a class="btn btn-sm btn-outline-dark"
+                                       asp-controller="Reviews" asp-action="Index" asp-route-eventId="@e.EventId">
+                                        Reviews
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>

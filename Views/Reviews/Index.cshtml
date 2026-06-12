@@ -1,0 +1,171 @@
+﻿@model List<SmartEventWeb.Models.Review>
+@{
+    ViewData["Title"] = "Event Reviews";
+    var events = ViewBag.Events as List<SmartEventWeb.Models.Event>;
+    int? selectedEventId = ViewBag.SelectedEventId as int?;
+}
+
+<h2 class="mb-3">Event Reviews</h2>
+
+<div class="card p-3 mb-3">
+    <form method="get" asp-controller="Reviews" asp-action="Index" class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label">Filter by Event</label>
+            <select class="form-select" name="eventId">
+                <option value="">All Events</option>
+                @if (events != null)
+                {
+                    foreach (var e in events)
+                    {
+                        var sel = (selectedEventId.HasValue && selectedEventId.Value == e.EventId) ? "selected" : "";
+                        <option value="@e.EventId" selected="@sel">@e.Title (@e.EventDate.ToString("yyyy-MM-dd"))</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-primary w-100">Apply Filter</button>
+        </div>
+    </form>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <div class="card p-3 mb-4">
+        <h5 class="mb-3">Write a Review</h5>
+
+        <form asp-controller="Reviews" asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-2">
+                <label class="form-label">Select Event</label>
+                <select class="form-select" name="eventId" required>
+                    @if (events != null)
+                    {
+                        foreach (var e in events)
+                        {
+                            <option value="@e.EventId">@e.Title (@e.EventDate.ToString("yyyy-MM-dd"))</option>
+                        }
+                    }
+                </select>
+                <small class="text-muted">Reviews allowed only after event date and only for booked events.</small>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Rating</label>
+                <select class="form-select" name="rating" required>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Bad</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Comment</label>
+                <textarea class="form-control" name="comment" maxlength="500" required></textarea>
+            </div>
+
+            <button class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+
+    <div>
+        Guests can only view reviews. Please login to submit a review.
+    </div>
+}
+
+<hr />
+
+<h4 class="mt-4 mb-3">What Our Members Say</h4>
+
+<div class="row alert alert-secondary mb-4">
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title">⭐ ⭐ ⭐ ⭐ ⭐</h5>
+                <p class="card-text">
+                    Excellent organization and great atmosphere.
+                    The music night was truly unforgettable!
+                </p>
+                <small class="text-muted">
+                    — Nimal Perera (Council Music Night)
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title">⭐ ⭐ ⭐ ⭐</h5>
+                <p class="card-text">
+                    Enjoyable event and smooth entry process.
+                    Seating was comfortable.
+                </p>
+                <small class="text-muted">
+                    — Kasuni Silva (Drama Festival)
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title">⭐ ⭐ ⭐ ⭐ ⭐</h5>
+                <p class="card-text">
+                    Amazing performances and well-managed crowd.
+                    Highly recommended!
+                </p>
+                <small class="text-muted">
+                    — Tharindu Jayasena (Council Music Night)
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title">⭐ ⭐ ⭐ ⭐</h5>
+                <p class="card-text">
+                    Great experience, but parking was limited.
+                    Overall very good.
+                </p>
+                <small class="text-muted">
+                    — Amaya Fernando (Drama Festival)
+                </small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="list-group">
+        @foreach (var r in Model)
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>@(r.Event?.Title ?? "Event")</strong>
+                    <small class="text-muted">@r.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+                </div>
+                <div class="mb-1">
+                    <span class="badge bg-success">@r.Rating / 5</span>
+                </div>
+                <p class="mb-0">@r.Comment</p>
+            </div>
+        }
+    </div>
+

@@ -1,0 +1,41 @@
+﻿@model List<SmartEventWeb.Models.Booking>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container">
+    <h3 class="fw-bold mb-3">Booking Access</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">No bookings found.</div>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Venue</th>
+                    <th>Seat Type</th>
+                    <th class="text-end">Qty</th>
+                    <th>Booked At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model)
+                {
+                    <tr>
+                        <td>@b.Event?.Title</td>
+                        <td>@b.Event?.EventDate.ToString("yyyy-MM-dd")</td>
+                        <td>@b.Event?.Venue?.Name (@b.Event?.Venue?.Location)</td>
+                        <td>@b.SeatType</td>
+                        <td class="text-end">@b.Quantity</td>
+                        <td>@b.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

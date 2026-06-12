@@ -1,0 +1,82 @@
+﻿@model List<SmartEventWeb.Models.Inquiry>
+
+@{
+    ViewData["Title"] = "Inquiry Management";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Inquiry Management</h2>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <div class="fw-bold">Total Inquiries</div>
+                <div class="fs-3">@ViewBag.Total</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <div class="fw-bold">Replied</div>
+                <div class="fs-3">@ViewBag.Replied</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <div class="fw-bold">Pending</div>
+                <div class="fs-3">@ViewBag.Pending</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ReferenceCode</td>
+                            <td>@item.Subject</td>
+                            <td>
+                                @if (item.IsReplied)
+                                {
+                                    <span class="badge bg-success">Replied</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                            </td>
+
+                            <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+
+                            <td class="text-end">
+                                @if (!item.IsReplied)
+                                {
+                                    <form asp-action="MarkReplied" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button class="btn btn-sm btn-primary">Mark as Replied</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Done</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,91 @@
+﻿@model IEnumerable<SmartEventWeb.Models.Event>
+
+@{
+    ViewData["Title"] = "Booking";
+}
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h2 class="fw-bold mb-0">Booking</h2>
+            <div class="text-muted">Select an event and continue to ticket booking.</div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info rounded-4 mb-0">
+                    No upcoming events available for booking.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr class="text-muted small">
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Venue</th>
+                                <th class="text-end">Price (LKR)</th>
+                                <th class="text-center">Remaining</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var e in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@e.Title</td>
+                                    <td>@e.EventDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@e.Category?.Name</td>
+                                    <td>@(e.Venue?.Name) (@(e.Venue?.Location))</td>
+                                    <td class="text-end">@e.Price.ToString("0.00")</td>
+
+                                    <td class="text-center">
+                                        @if (e.RemainingTickets <= 0)
+                                        {
+                                            <span class="badge bg-danger">Full</span>
+                                        }
+                                        else if (e.RemainingTickets <= 10)
+                                        {
+                                            <span class="badge bg-warning text-dark">@e.RemainingTickets</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">@e.RemainingTickets</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end">
+                                        @if (e.RemainingTickets <= 0)
+                                        {
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>Unavailable</button>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-sm btn-primary"
+                                               asp-controller="Bookings"
+                                               asp-action="Create"
+                                               asp-route-eventId="@e.EventId">
+                                                Book
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3 text-muted small">
+                   Clicking <b>Book</b> takes the user to the ticket booking form.
+                </div>
+            }
+        </div>
+    </div>
+</div>

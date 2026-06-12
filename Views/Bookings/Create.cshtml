@@ -1,0 +1,62 @@
+﻿@model SmartEventWeb.Models.BookingCreateVM
+@{
+    ViewData["Title"] = "Book Tickets";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-body p-4">
+
+                    <h4 class="mb-1">Book Tickets</h4>
+                    <p class="text-muted mb-3">@ViewBag.EventTitle</p>
+
+                    <div class="alert alert-info rounded-3">
+                        Remaining Tickets: <strong>@ViewBag.Remaining</strong>
+                    </div>
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Success"]</div>
+                    }
+
+                    <form asp-action="Create" method="post">
+                        <input type="hidden" asp-for="EventId" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Seat Type</label>
+                            <select asp-for="SeatType" class="form-select">
+                                <option value="Standard">Standard</option>
+                                <option value="VIP">VIP</option>
+                            </select>
+                            <span asp-validation-for="SeatType" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Quantity</label>
+                            <input asp-for="Quantity" class="form-control" min="1" />
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+
+                        <div asp-validation-summary="All" class="text-danger mb-2"></div>
+                        <div class="alert alert-info rounded-3">
+                            <div><strong>Capacity:</strong> @ViewBag.Capacity</div>
+                            <div><strong>Sold:</strong> @ViewBag.Sold</div>
+                            <div><strong>Remaining:</strong> @ViewBag.Remaining</div>
+                        </div>
+
+
+                        <button class="btn btn-primary w-100 rounded-4">Confirm Booking</button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
